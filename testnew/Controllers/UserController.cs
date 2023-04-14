@@ -44,8 +44,9 @@ namespace testnew.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public int Post([FromBody]User value)
         {
+            return InsertUser(value);
         }
 
         // PUT api/values/5
@@ -60,7 +61,7 @@ namespace testnew.Controllers
         {
         }
 
-        private int isAuthenticated()
+        public static int isAuthenticated(HttpRequest request)
         {
             StringValues values;
 
@@ -69,13 +70,13 @@ namespace testnew.Controllers
             string username = string.Empty;
             string pwd = string.Empty;
 
-            if (Request.Headers.TryGetValue("username", out values))
+            if (request.Headers.TryGetValue("username", out values))
             {
                 username = values.FirstOrDefault();
 
             }
 
-            if (Request.Headers.TryGetValue("password", out values))
+            if (request.Headers.TryGetValue("password", out values))
             {
                 pwd = values.FirstOrDefault();
 
@@ -111,7 +112,7 @@ namespace testnew.Controllers
         private User GetUser(int id)
         {
             var user = new User();
-            var aid = isAuthenticated();
+
             using (var connection = new SqlConnection(_configuration.GetConnectionString("UserDatabase")))
             {
                 var sql = "SELECT * from Users WHERE ID=" + id;
@@ -130,6 +131,22 @@ namespace testnew.Controllers
             }
             return user;
         }
+
+        private int InsertUser(User user)
+        {
+            int affected = 0;
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("UserDatabase")))
+            {
+                var sql = "INSERT INTO Users (FirstName, LastName, UserName, Password, Gender) VALUES ('" + user.FirstName + "', '" + user.LastName + "', '" + user.UserName + "', '" + user.Password + "', '" + user.Gender + "')";
+
+                connection.Open();
+                using SqlCommand command = new SqlCommand(sql, connection);
+                affected = command.ExecuteNonQuery();
+
+            }
+            return affected;
+        }
+
     }
 }
 
