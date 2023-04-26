@@ -97,12 +97,14 @@ namespace testnew.Controllers
                 using SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    var user = new User()
-                    {
-                        ID = (int) reader["ID"],
-                        FirstName = reader["FirstName"].ToString(),
-                        LastName = reader["LastName"].ToString(),
-                        Gender = reader["Gender"].ToString(),
+                    var user = new User()
+                    {
+                        ID = (int)reader["ID"],
+                        FirstName = reader["FirstName"].ToString(),
+                        LastName = reader["LastName"].ToString(),
+                        Gender = reader["Gender"].ToString(),
+                        UserName = reader["UserName"].ToString(),
+                        Password = reader["Password"].ToString()
                     };
                      users.Add(user);
                 }
@@ -126,6 +128,8 @@ namespace testnew.Controllers
                     user.FirstName = reader["FirstName"].ToString();
                     user.LastName = reader["LastName"].ToString();
                     user.Gender = reader["Gender"].ToString();
+                    user.UserName = reader["UserName"].ToString();
+                    user.Password = reader["Password"].ToString();
                     
                 }
             }
@@ -142,7 +146,6 @@ namespace testnew.Controllers
                 connection.Open();
                 using SqlCommand command = new SqlCommand(sql, connection);
                 affected = command.ExecuteNonQuery();
-
             }
             return affected;
         }
